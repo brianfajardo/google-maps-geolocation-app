@@ -1,4 +1,5 @@
 const http = require('http')
+const path = require('path')
 const express = require('express')
 const bodyParser = require('body-parser')
 const socketIo = require('socket.io')
@@ -8,10 +9,24 @@ const server = http.createServer(app)
 const io = socketIo(server)
 
 const PORT = 3000
+const locationMap = new Map()
 
+app.use(express.static(path.resolve(__dirname, '../public')))
 app.use(bodyParser.json())
 
-app.get('/', (req,res) => res.send('Hello world'))
+io.on('connection', (socket) => {
+
+  socket.on('location:update', (position) => {
+    console.log('received pos -->', position)
+    if (!locationMap.has(socket.id)) {
+      locationMap.set(socket.id, position)
+      console.log(locationMap)
+    }
+  })
+
+  socket.on('disconnect', () => locationMap.delete(socket.id))
+
+})
 
 server.listen(PORT, (err) => {
   if (err) { throw err }
