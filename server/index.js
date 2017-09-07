@@ -21,6 +21,7 @@ io.on('connection', (socket) => {
     if (!locationMap.has(socket.id)) {
       locationMap.set(socket.id, pos)
     }
+    socket.emit('location:update', Array.from(locationMap))
   })
 
   socket.on('disconnect', () => locationMap.delete(socket.id))
