@@ -1,18 +1,30 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const socket = io('/')
+'use strict';
 
-  const positionOptions = {
-    enableHighAccuracy: true,
-    maximumAge: 0
+(function () {
+
+  let map
+  const socket = io('/')
+  const initialZoom = 9
+  const positionOptions = { enableHighAccuracy: true, maximumAge: 0 }
+
+  // Initialize Google map on user's current location.
+  function initMap() {
+    navigator.geolocation.getCurrentPosition((pos) => {
+      const { latitude: lat, longitude: lng } = pos.coords
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat, lng },
+        zoom: initialZoom
+      })
+    })
   }
 
+  // Poll for user's current location every 2 seconds
   setInterval(() => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      const { latitude: lat, longitude: lng } = position.coords
+    navigator.geolocation.getCurrentPosition((pos) => {
+      const { latitude: lat, longitude: lng } = pos.coords
       socket.emit('location:update', { lat, lng })
-      console.log('sent')
-    }, (err) => {
-      console.log(err)
-    }, positionOptions)
+    })
   }, 2000)
-})
+
+  return initMap()
+})()

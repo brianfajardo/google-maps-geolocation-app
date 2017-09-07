@@ -16,11 +16,10 @@ app.use(bodyParser.json())
 
 io.on('connection', (socket) => {
 
-  socket.on('location:update', (position) => {
-    console.log('received pos -->', position)
+  socket.on('location:update', (pos) => {
+    console.log('received coordinates:', pos)
     if (!locationMap.has(socket.id)) {
-      locationMap.set(socket.id, position)
-      console.log(locationMap)
+      locationMap.set(socket.id, pos)
     }
   })
 
