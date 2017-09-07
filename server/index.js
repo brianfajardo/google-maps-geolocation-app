@@ -17,9 +17,7 @@ app.use(bodyParser.json())
 io.on('connection', (socket) => {
 
   socket.on('location:update', (pos) => {
-    if (!locationMap.has(socket.id)) {
-      locationMap.set(socket.id, pos)
-    }
+    locationMap.set(socket.id, pos)
     socket.emit('location:update', Array.from(locationMap))
   })
 

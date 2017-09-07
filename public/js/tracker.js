@@ -46,7 +46,7 @@
           position,
           title: id,
         })
-        markers.set(id, position)
+        markers.set(id, marker)
       }
     })
   })
