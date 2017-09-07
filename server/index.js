@@ -17,14 +17,16 @@ app.use(bodyParser.json())
 io.on('connection', (socket) => {
 
   socket.on('location:update', (pos) => {
-    console.log('received coordinates:', pos)
     if (!locationMap.has(socket.id)) {
       locationMap.set(socket.id, pos)
     }
     socket.emit('location:update', Array.from(locationMap))
   })
 
-  socket.on('disconnect', () => locationMap.delete(socket.id))
+  socket.on('disconnect', () => {
+    socket.emit('client:disconnect', socket.id)
+    locationMap.delete(socket.id)
+  })
 
 })
 
